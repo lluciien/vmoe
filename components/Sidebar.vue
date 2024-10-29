@@ -13,9 +13,9 @@
             @mousedown="startLongPress(author)"
             @mouseup="cancelLongPress"
             @mouseleave="cancelLongPress"
-            @touchstart="startLongPress(author)"
-            @touchend="cancelLongPress"
-            @touchcancel="cancelLongPress"
+            @touchstart.prevent="startLongPress(author)"
+            @touchend.prevent="cancelLongPress"
+            @touchcancel.prevent="cancelLongPress"
           >
             {{ author.name }}
             <ChevronDownIcon v-if="!openAuthors.includes(author.id)" />
@@ -23,9 +23,9 @@
           </div>
           <transition name="slide">
             <ul v-if="openAuthors.includes(author.id)">
-              <li v-for="character in author.characters" :key="character.id">
-                <router-link :to="{ name: 'character', params: { id: character.id } }">
-                  {{ character.name }}
+              <li v-for="characterId in author.characters" :key="characterId">
+                <router-link :to="{ name: 'character', params: { id: characterId } }">
+                  {{ getCharacterName(characterId) }}
                 </router-link>
               </li>
             </ul>
@@ -58,7 +58,7 @@ const isOpen = ref(false)
 const openAuthors = ref([])
 const longPressTimer = ref(null)
 
-const authors = computed(() => store.state.authors)
+const authors = computed(() => store.state.authors.authors)
 const currentTheme = computed(() => store.state.theme.current)
 const themes = ['default', 'elegant', 'cute']
 
@@ -98,6 +98,11 @@ const getThemeColor = (theme) => {
     cute: '#ff69b4'
   }
   return themeColors[theme]
+}
+
+const getCharacterName = (characterId) => {
+  const character = store.getters['characters/getCharacterById'](characterId)
+  return character ? character.name : 'Unknown Character'
 }
 </script>
 
@@ -191,5 +196,21 @@ nav ul {
 
 .theme-btn.active {
   box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary);
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    left: -100%;
+  }
+
+  .sidebar-open {
+    left: 0;
+  }
+
+  .toggle-btn {
+    right: 10px;
+    top: 10px;
+  }
 }
 </style>
