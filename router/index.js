@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import CharacterPage from '../components/CharacterPage.vue'
+import AuthorPage from '../components/AuthorPage.vue'
 
 const routes = [
   {
@@ -7,7 +8,15 @@ const routes = [
     name: 'character',
     component: CharacterPage
   },
-  // Add more routes here
+  {
+    path: '/author/:id',
+    name: 'author',
+    component: AuthorPage
+  },
+  {
+    path: '/',
+    redirect: '/character/1'
+  }
 ]
 
 const router = createRouter({
